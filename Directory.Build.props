@@ -1,0 +1,50 @@
+<Project>
+  <PropertyGroup>
+    <!-- Synchronized version across all projects -->
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>alpha.1</VersionSuffix>
+
+    <!-- Package metadata (shared across all projects) -->
+    <Authors>JDE Query Library Contributors</Authors>
+    <Company>JDE Query Library</Company>
+    <Product>JDE Query Library</Product>
+    <Copyright>Copyright (c) 2025 JDE Query Library Contributors</Copyright>
+
+    <!-- Repository and project URLs -->
+    <PackageProjectUrl>https://github.com/YOUR-USERNAME/JDEQuery</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/YOUR-USERNAME/JDEQuery</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- License -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- Package tags and description -->
+    <PackageTags>jde;jdedwards;enterpriseone;oracle;database;query;dapper</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Build configuration -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Source link for debugging -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Deterministic builds -->
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- Include README in NuGet packages -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Source Link package -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+</Project>
