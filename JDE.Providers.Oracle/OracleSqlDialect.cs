@@ -1,4 +1,5 @@
 using JDE.Abstractions;
+using JDE.Abstractions.Queries;
 using System.Text;
 
 namespace JDE.Providers.Oracle;
@@ -142,6 +143,54 @@ public class OracleSqlDialect : ISqlDialect
         }
 
         return string.Join(" AND ", conditions);
+    }
+
+    /// <inheritdoc />
+    public string BuildWhereClause(IEnumerable<WhereCondition> conditions)
+    {
+        if (conditions == null || !conditions.Any())
+        {
+            return string.Empty;
+        }
+
+        var whereParts = new List<string>();
+        var paramIndex = 0;
+
+        foreach (var condition in conditions)
+        {
+            var fieldName = QuoteIdentifier(condition.FieldName);
+            var paramName = FormatParameterName($"p{paramIndex}");
+
+            string conditionSql = condition.Operator switch
+            {
+                WhereOperator.Equal => condition.Value == null
+                    ? $"{fieldName} IS NULL"
+                    : $"{fieldName} = {paramName}",
+
+                WhereOperator.NotEqual => condition.Value == null
+                    ? $"{fieldName} IS NOT NULL"
+                    : $"{fieldName} <> {paramName}",
+
+                WhereOperator.GreaterThan => $"{fieldName} > {paramName}",
+
+                WhereOperator.LessThan => $"{fieldName} < {paramName}",
+
+                WhereOperator.GreaterThanOrEqual => $"{fieldName} >= {paramName}",
+
+                WhereOperator.LessThanOrEqual => $"{fieldName} <= {paramName}",
+
+                WhereOperator.Like => $"{fieldName} LIKE {paramName}",
+
+                WhereOperator.TrimmedEqual => $"TRIM({fieldName}) = {paramName}",
+
+                _ => throw new NotSupportedException($"Operator '{condition.Operator}' is not supported.")
+            };
+
+            whereParts.Add(conditionSql);
+            paramIndex++;
+        }
+
+        return string.Join(" AND ", whereParts);
     }
 
     /// <inheritdoc />

@@ -53,6 +53,13 @@ public interface ISqlDialect
     string BuildWhereClause(IDictionary<string, object?> filters);
 
     /// <summary>
+    /// Builds a parameterized WHERE clause from WHERE conditions with operators.
+    /// </summary>
+    /// <param name="conditions">List of WHERE conditions.</param>
+    /// <returns>WHERE clause with parameters (without the WHERE keyword).</returns>
+    string BuildWhereClause(IEnumerable<Queries.WhereCondition> conditions);
+
+    /// <summary>
     /// Formats a parameter name with the correct prefix.
     /// </summary>
     /// <param name="parameterName">The parameter name without prefix.</param>

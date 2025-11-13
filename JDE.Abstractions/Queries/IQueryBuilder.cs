@@ -51,6 +51,64 @@ public interface IQueryBuilder<T>
     IQueryBuilder<T> Filter(string fieldName, object? value);
 
     /// <summary>
+    /// Adds a WHERE condition with greater than operator.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against.</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereGreaterThan(string fieldName, object value);
+
+    /// <summary>
+    /// Adds a WHERE condition with less than operator.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against.</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereLessThan(string fieldName, object value);
+
+    /// <summary>
+    /// Adds a WHERE condition with greater than or equal operator.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against.</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereGreaterThanOrEqual(string fieldName, object value);
+
+    /// <summary>
+    /// Adds a WHERE condition with less than or equal operator.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against.</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereLessThanOrEqual(string fieldName, object value);
+
+    /// <summary>
+    /// Adds a WHERE condition with not equal operator.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against.</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereNotEqual(string fieldName, object? value);
+
+    /// <summary>
+    /// Adds a LIKE condition for pattern matching.
+    /// Useful for JDE fields with padding where exact match may not work.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="pattern">The LIKE pattern (use % for wildcards).</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereLike(string fieldName, string pattern);
+
+    /// <summary>
+    /// Adds a WHERE condition that trims the field before comparison.
+    /// Useful for JDE fields that are padded to max length.
+    /// </summary>
+    /// <param name="fieldName">The field name.</param>
+    /// <param name="value">The value to compare against (without padding).</param>
+    /// <returns>The query builder for chaining.</returns>
+    IQueryBuilder<T> WhereTrimmedEqual(string fieldName, string value);
+
+    /// <summary>
     /// Skips a specified number of rows (for pagination).
     /// </summary>
     /// <param name="count">Number of rows to skip.</param>

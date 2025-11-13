@@ -18,7 +18,7 @@ public class QueryBuilder<T> : IQueryBuilder<T>
 
     private List<string>? _selectedFields;
     private string? _indexName;
-    private readonly Dictionary<string, object?> _filters = new();
+    private readonly List<WhereCondition> _conditions = new();
     private int? _skip;
     private int? _take;
 
@@ -91,7 +91,7 @@ public class QueryBuilder<T> : IQueryBuilder<T>
             throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
         }
 
-        _filters[fieldName] = value;
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.Equal, value));
         return this;
     }
 
@@ -105,7 +105,7 @@ public class QueryBuilder<T> : IQueryBuilder<T>
 
         foreach (var filter in filters)
         {
-            _filters[filter.Key] = filter.Value;
+            _conditions.Add(new WhereCondition(filter.Key, WhereOperator.Equal, filter.Value));
         }
 
         return this;
@@ -115,6 +115,120 @@ public class QueryBuilder<T> : IQueryBuilder<T>
     public IQueryBuilder<T> Filter(string fieldName, object? value)
     {
         return Where(fieldName, value);
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereGreaterThan(string fieldName, object value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value), "Value cannot be null for comparison operators.");
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.GreaterThan, value));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereLessThan(string fieldName, object value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value), "Value cannot be null for comparison operators.");
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.LessThan, value));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereGreaterThanOrEqual(string fieldName, object value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value), "Value cannot be null for comparison operators.");
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.GreaterThanOrEqual, value));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereLessThanOrEqual(string fieldName, object value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value), "Value cannot be null for comparison operators.");
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.LessThanOrEqual, value));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereNotEqual(string fieldName, object? value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.NotEqual, value));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereLike(string fieldName, string pattern)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (pattern == null)
+        {
+            throw new ArgumentNullException(nameof(pattern));
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.Like, pattern));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IQueryBuilder<T> WhereTrimmedEqual(string fieldName, string value)
+    {
+        if (string.IsNullOrWhiteSpace(fieldName))
+        {
+            throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+        }
+
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.TrimmedEqual, value));
+        return this;
     }
 
     /// <inheritdoc />
@@ -146,9 +260,9 @@ public class QueryBuilder<T> : IQueryBuilder<T>
     {
         // Build WHERE clause
         string? whereClause = null;
-        if (_filters.Count > 0)
+        if (_conditions.Count > 0)
         {
-            whereClause = _sqlDialect.BuildWhereClause(_filters);
+            whereClause = _sqlDialect.BuildWhereClause(_conditions);
         }
 
         // Build base SELECT statement
@@ -164,8 +278,17 @@ public class QueryBuilder<T> : IQueryBuilder<T>
             sql = _sqlDialect.ApplyPagination(sql, _skip, _take);
         }
 
-        // Convert filters to parameter object for Dapper
-        var parameters = _filters.Count > 0 ? (object)_filters : null;
+        // Convert conditions to parameter object for Dapper
+        object? parameters = null;
+        if (_conditions.Count > 0)
+        {
+            var paramDict = new Dictionary<string, object?>();
+            for (int i = 0; i < _conditions.Count; i++)
+            {
+                paramDict[$"p{i}"] = _conditions[i].Value;
+            }
+            parameters = paramDict;
+        }
 
         return new JdeQuery<T>(sql, parameters, _tableName, _configuration.Schema);
     }
