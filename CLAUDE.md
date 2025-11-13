@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** Oracle Provider Complete - Building Metadata System
-**Latest Commit:** 795979f - feat: implement Oracle provider with SQL dialect
+**Status:** Metadata System Complete - Building Tooling
+**Latest Commit:** 44a64bc - feat: implement metadata system and F0101 model
 
 ---
 
