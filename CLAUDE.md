@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** Core Abstractions Complete - Building Query Engine
-**Latest Commit:** 1872c7b - feat: implement core abstractions in JDE.Abstractions
+**Status:** Oracle Provider Complete - Building Metadata System
+**Latest Commit:** 795979f - feat: implement Oracle provider with SQL dialect
 
 ---
 
@@ -99,10 +99,23 @@ JDEQuery.sln
   - JdeOptions - configuration with validation
   - JdeException hierarchy - custom exception types
   - Commit: `1872c7b` - "feat: implement core abstractions"
+- [x] **Query engine implemented** (JDE.Core):
+  - JdeQuery<T> - base query implementation
+  - QueryBuilder<T> - fluent API with SelectFields, Where, Skip, Take
+  - QueryFactory - creates query builders
+  - Full async/await support with cancellation tokens
+  - Commit: `f08b881` - "feat: implement query builder with fluent API"
+- [x] **Oracle provider implemented** (JDE.Providers.Oracle):
+  - OracleSqlDialect - Oracle-specific SQL generation
+  - OracleDbProvider - Dapper + Oracle.ManagedDataAccess integration
+  - OFFSET-FETCH pagination (Oracle 12c+)
+  - Parameterized queries with colon-prefix (:p0)
+  - Connection testing and proper error handling
+  - Commit: `795979f` - "feat: implement Oracle provider with SQL dialect"
 
 ### 🔄 In Progress
 
-- [ ] Building query builder implementation with fluent API
+- [ ] Building metadata system for JDE tables
 
 ### 📋 Pending (Priority Order)
 
