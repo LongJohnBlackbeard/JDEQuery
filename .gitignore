@@ -126,10 +126,6 @@ _ReSharper*/
 __pycache__/
 *.pyc
 
-# Cake
-tools/**
-!tools/packages.config
-
 # Paket dependency manager
 .paket/paket.exe
 paket-files/
