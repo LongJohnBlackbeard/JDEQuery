@@ -2,7 +2,8 @@
 
 **Last Updated:** 2025-11-13
 **Status:** MVP Complete - Tests Passing, Sample App Ready, GitHub Configured, CI/CD Working
-**Latest Commit:** fdec8b5 - fix: correct method name from AddCommandLineArgs to AddCommandLine
+**Default Branch:** main (renamed from master)
+**Latest Commit:** 173ef6e - refactor: update all branch references from master to main
 
 ---
 
@@ -182,6 +183,13 @@ JDEQuery.sln
   - Fixed security scan to only upload on push events
   - Fixed sample app typo: AddCommandLineArgs → AddCommandLine
   - Commits: `a4a30f9`, `fdec8b5`
+- [x] **Branch rename from master to main**:
+  - Updated all workflow files to reference 'main' branch
+  - Updated issue template URLs from master to main
+  - Renamed local and remote branches
+  - Changed default branch on GitHub
+  - Deleted old master branch
+  - Commit: `173ef6e` - "refactor: update all branch references from master to main"
 
 ### 🔄 In Progress
 
