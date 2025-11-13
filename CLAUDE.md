@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** JdeClient API Complete - Ready for Testing
-**Latest Commit:** 0beacaf - feat: add JdeClient API with query operators and field padding support
+**Status:** MVP Complete - Tests Passing, Sample App Ready
+**Latest Commit:** 1bea30f - test: add comprehensive unit tests and sample application
 
 ---
 
@@ -148,20 +148,38 @@ JDEQuery.sln
   - WhereTrimmedEqual for comparing fields without trailing spaces
   - Oracle TRIM() function integration
   - LIKE operator support with parameterized patterns
+- [x] **Comprehensive unit tests** (42 tests, all passing):
+  - OracleSqlDialectTests (24 tests) - SQL generation, operators, pagination
+  - QueryBuilderTests (18 tests) - Fluent API, parameter generation, async execution
+  - 100% coverage of all query operators and field padding methods
+  - Mock-based testing with Moq and FluentAssertions
+  - Commit: `1bea30f` - "test: add comprehensive unit tests..."
+- [x] **F4101 Item Master metadata and model**:
+  - Complete metadata with 43 fields and 5 indexes
+  - F4101Model DTO with full field mapping
+  - Product classifications, procurement codes, audit fields
+- [x] **Sample application** (JDE.Samples.QueryExamples):
+  - Console app with 7 comprehensive query examples
+  - Demonstrates all query operators and field padding
+  - Configuration for DV920/PY920/PROD environments
+  - Dependency injection setup examples
+  - Complete README with setup and troubleshooting
+  - Ready to run against real JDE databases
 
 ### 🔄 In Progress
 
-- [ ] Implement MetadataExtractor Program.cs logic
-- [ ] Implement CodeGenerator to generate C# classes from CSV
+- [ ] Create GitHub repository and push code
+- [ ] Add remote origin to local git repo
 
 ### 📋 Pending (Priority Order)
 
-1. Write unit tests for query builders and SQL generation
-2. Write integration tests with Oracle database
-3. Add more JDE table metadata (F0111, F4801, F4101, etc.)
-4. Document usage examples and best practices
-5. Create GitHub repository and publish code
-6. Publish NuGet packages
+1. Implement MetadataExtractor Program.cs logic
+2. Implement CodeGenerator to generate C# classes from CSV
+3. Write integration tests with Oracle database (requires DB access)
+4. Add more JDE table metadata (F0111, F0006, F4801, etc.)
+5. Create comprehensive documentation (README updates, wiki)
+6. Publish NuGet packages to nuget.org
+7. Add CI/CD pipeline (GitHub Actions)
 
 ---
 
@@ -311,6 +329,55 @@ None currently.
 
 ---
 
+## Testing and Validation
+
+### Unit Tests (42 tests - all passing)
+
+**Run tests:** `dotnet test JDE.Tests/JDE.Tests.csproj`
+
+**OracleSqlDialectTests (24 tests):**
+- SQL generation for all operators (=, <>, <, >, <=, >=, LIKE, TRIM)
+- Parameter formatting (`:p0`, `:p1`, etc.)
+- Identifier quoting (`"COLUMN"`)
+- SELECT statement generation (columns, schema, WHERE)
+- Pagination (OFFSET/FETCH)
+- NULL handling (IS NULL, IS NOT NULL)
+- Multiple WHERE conditions with AND
+
+**QueryBuilderTests (18 tests):**
+- Field selection validation
+- All operator methods (WhereGreaterThan, WhereLessThan, etc.)
+- Field padding methods (WhereLike, WhereTrimmedEqual)
+- Pagination (Skip/Take) with validation
+- Parameter generation from WhereCondition objects
+- Async execution (FetchSingleAsync, FetchManyAsync)
+- Mock-based testing with IDbProvider
+
+### Sample Application
+
+**Location:** `samples/JDE.Samples.QueryExamples/`
+
+**Run sample:**
+```bash
+cd samples/JDE.Samples.QueryExamples
+# Update appsettings.json with your connection string
+dotnet run
+```
+
+**7 Example Queries:**
+1. Basic Query - Single record retrieval
+2. Column Selection - Performance optimization
+3. Comparison Operators - Range queries
+4. Field Padding Handling - LIKE and TRIM
+5. Pagination - Skip/Take patterns
+6. Item Master Queries - F4101 examples
+7. Multiple Conditions - Complex WHERE clauses
+
+**Environments Configured:**
+- DV920 (Development on non-prod)
+- PY920 (Test on non-prod)
+- PROD920 (Production)
+
 ## Notes
 
 - JDE tables often have 70-100+ columns, column selection is critical for performance
@@ -324,6 +391,7 @@ None currently.
   - Regular `Where()` requires exact match including padding
 - **Vanilla Tables:** Tables starting with 'F' EXCLUDING F55xxx-F59xxx (custom/OneWorld)
 - **Tools Projects:** MetadataExtractor and CodeGenerator are marked `IsPackable=false` and excluded from NuGet packages
+- **Test Coverage:** 42 unit tests covering all operators, pagination, and field padding
 
 ---
 
