@@ -3,7 +3,12 @@
     "allow": [
       "Bash(dotnet new:*)",
       "Bash(dotnet add:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(del:*)",
+      "Bash(del JDE.CoreClass1.cs)",
+      "Bash(del JDE.Providers.OracleClass1.cs)",
+      "Bash(del JDE.MetadataClass1.cs)",
+      "Bash(del JDE.ClientClass1.cs)"
     ],
     "deny": [],
     "ask": []
