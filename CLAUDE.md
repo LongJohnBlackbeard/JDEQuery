@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** Git Repository Initialized - Implementing Core Abstractions
-**Latest Commit:** 5cc5edf - chore: initial project setup
+**Status:** Core Abstractions Complete - Building Query Engine
+**Latest Commit:** 1872c7b - feat: implement core abstractions in JDE.Abstractions
 
 ---
 
@@ -86,10 +86,23 @@ JDEQuery.sln
   - Created README.md with usage examples and project overview
   - Created CONTRIBUTING.md with development guidelines
   - Initial commit: `5cc5edf` - "chore: initial project setup"
+- [x] **NuGet versioning strategy**:
+  - Created VERSIONING.md documenting Semantic Versioning 2.0
+  - Implemented Directory.Build.props for centralized version management
+  - Set initial version to 0.1.0-alpha.1
+  - Commit: `9d86292` - "chore: add NuGet versioning strategy"
+- [x] **Core abstractions implemented** (JDE.Abstractions):
+  - IDbProvider - database connection and execution interface
+  - ISqlDialect - SQL generation interface
+  - IJdeTable, IJdeField, IJdeIndex - metadata interfaces
+  - IJdeQuery<T>, IQueryBuilder<T> - query interfaces
+  - JdeOptions - configuration with validation
+  - JdeException hierarchy - custom exception types
+  - Commit: `1872c7b` - "feat: implement core abstractions"
 
 ### 🔄 In Progress
 
-- [ ] Implementing core abstractions (IDbProvider, ISqlDialect, query interfaces)
+- [ ] Building query builder implementation with fluent API
 
 ### 📋 Pending (Priority Order)
 
