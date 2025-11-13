@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** Tooling Infrastructure Ready - Core Library Functional
-**Latest Commit:** 7655dc8 - chore: add metadata extraction tooling infrastructure
+**Status:** JdeClient API Complete - Ready for Testing
+**Latest Commit:** 0beacaf - feat: add JdeClient API with query operators and field padding support
 
 ---
 
@@ -123,54 +123,126 @@ JDEQuery.sln
   - CodeGenerator placeholder for code generation
   - Comprehensive README.md with usage docs
   - Vanilla table filtering: F* excluding F55-F59
+  - Projects marked as IsPackable=false to exclude from NuGet
   - Commit: `d145875`, `7655dc8` - "chore: add metadata extraction tooling"
+- [x] **JdeClient API implemented** (JDE.Client):
+  - Main JdeClient class with Query<T>() method
+  - ServiceCollectionExtensions with 3 DI configuration methods:
+    * AddJdeQuery(IConfiguration, sectionName)
+    * AddJdeQuery(Action<JdeOptions>)
+    * AddJdeQueryOracle(connectionString, schema, environment)
+  - Automatic provider registration based on configuration
+  - TestConnectionAsync() for connection validation
+  - Disposable pattern for resource cleanup
+  - Commit: `0beacaf` - "feat: add JdeClient API with query operators..."
+- [x] **Query operator support**:
+  - WhereGreaterThan, WhereLessThan for numeric comparisons
+  - WhereGreaterThanOrEqual, WhereLessThanOrEqual for inclusive ranges
+  - WhereNotEqual for inequality checks
+  - WhereCondition class with WhereOperator enum for type safety
+  - ISqlDialect overload accepting WhereCondition list
+  - OracleSqlDialect support for all operators (=, <>, <, >, <=, >=)
+  - Proper NULL handling with IS NULL and IS NOT NULL
+- [x] **Field padding handling** (for JDE's max-length padded fields):
+  - WhereLike for pattern matching with wildcards (e.g., "ABC%")
+  - WhereTrimmedEqual for comparing fields without trailing spaces
+  - Oracle TRIM() function integration
+  - LIKE operator support with parameterized patterns
 
 ### 🔄 In Progress
 
 - [ ] Implement MetadataExtractor Program.cs logic
-- [ ] Build JdeClient public API with DI
+- [ ] Implement CodeGenerator to generate C# classes from CSV
 
 ### 📋 Pending (Priority Order)
 
-1. Complete core abstractions implementation
-3. Build query builder with fluent API (SelectFields, Take, Skip, Where)
-4. Implement Oracle SQL dialect
-5. Create Oracle provider with Dapper integration
-6. Build metadata system (start with F0101)
-7. Implement JdeClient API with DI
-8. Add configuration support
-9. Create F0101 DTO model
-10. Write tests
+1. Write unit tests for query builders and SQL generation
+2. Write integration tests with Oracle database
+3. Add more JDE table metadata (F0111, F4801, F4101, etc.)
+4. Document usage examples and best practices
+5. Create GitHub repository and publish code
+6. Publish NuGet packages
 
 ---
 
 ## API Design Examples
 
+### Dependency Injection Setup
+```csharp
+// Method 1: From IConfiguration (appsettings.json)
+services.AddJdeQuery(configuration, "JdeQuery");
+
+// Method 2: With Action<JdeOptions>
+services.AddJdeQuery(options =>
+{
+    options.ConnectionString = "User Id=JDE;Password=pass;Data Source=prod";
+    options.Schema = "PROD920";
+    options.Provider = "Oracle";
+});
+
+// Method 3: Oracle-specific shorthand
+services.AddJdeQueryOracle(
+    connectionString: "User Id=JDE;Password=pass;Data Source=prod",
+    schema: "PROD920",
+    environment: "Production");
+```
+
 ### Basic Query (Full Columns)
 ```csharp
-var customer = await jdeClient.Query<F0101>()
-    .UsingIndex("PK_F0101")
+var customer = await jdeClient.Query<F0101Model>("F0101")
     .Where("ABAN8", 1001)
     .FetchSingleAsync();
 ```
 
 ### Column Selection
 ```csharp
-var result = await jdeClient.Query<F0101>()
+var result = await jdeClient.Query<F0101Model>("F0101")
     .SelectFields("ABAN8", "ABALPH", "ABAT1")
     .Where("ABAT1", "C")
     .FetchManyAsync();
 ```
 
+### Comparison Operators
+```csharp
+// Greater than
+var highValueCustomers = await jdeClient.Query<F0101Model>("F0101")
+    .WhereGreaterThan("ABAN8", 100000)
+    .FetchManyAsync();
+
+// Range queries
+var recentOrders = await jdeClient.Query<F4801Model>("F4801")
+    .WhereGreaterThanOrEqual("WDDGJ", 123001)  // Julian date >= Jan 1, 2023
+    .WhereLessThanOrEqual("WDDGJ", 123365)     // Julian date <= Dec 31, 2023
+    .FetchManyAsync();
+
+// Not equal
+var nonCustomers = await jdeClient.Query<F0101Model>("F0101")
+    .WhereNotEqual("ABAT1", "C")
+    .FetchManyAsync();
+```
+
+### Field Padding Handling
+```csharp
+// JDE fields are padded - use WhereTrimmedEqual for exact match
+var customer = await jdeClient.Query<F0101Model>("F0101")
+    .WhereTrimmedEqual("ABALPH", "ACME CORP")  // Matches "ACME CORP          "
+    .FetchSingleAsync();
+
+// Pattern matching with LIKE
+var results = await jdeClient.Query<F0101Model>("F0101")
+    .WhereLike("ABALPH", "ACME%")  // Starts with ACME
+    .FetchManyAsync();
+```
+
 ### Pagination
 ```csharp
-var page1 = await jdeClient.Query<F0101>()
-    .Filter("ABAT1", "C")
+var page1 = await jdeClient.Query<F0101Model>("F0101")
+    .Where("ABAT1", "C")
     .Take(100)
     .FetchManyAsync();
 
-var page2 = await jdeClient.Query<F0101>()
-    .Filter("ABAT1", "C")
+var page2 = await jdeClient.Query<F0101Model>("F0101")
+    .Where("ABAT1", "C")
     .Skip(100).Take(100)
     .FetchManyAsync();
 ```
@@ -245,7 +317,13 @@ None currently.
 - Oracle pagination: Use OFFSET-FETCH (12c+) or ROWNUM fallback for older versions
 - All queries must be parameterized for security
 - Connection string configuration per environment (DEV, TEST, PROD)
-- Start with F0101 (Address Book) as the reference table implementation
+- F0101 (Address Book) serves as the reference table implementation
+- **JDE Field Padding:** JDE pads all character fields to max length with spaces
+  - Use `WhereTrimmedEqual()` for exact matches without padding
+  - Use `WhereLike()` for pattern matching
+  - Regular `Where()` requires exact match including padding
+- **Vanilla Tables:** Tables starting with 'F' EXCLUDING F55xxx-F59xxx (custom/OneWorld)
+- **Tools Projects:** MetadataExtractor and CodeGenerator are marked `IsPackable=false` and excluded from NuGet packages
 
 ---
 
