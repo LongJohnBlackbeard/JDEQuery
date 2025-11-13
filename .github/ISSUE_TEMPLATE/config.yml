@@ -4,8 +4,8 @@ contact_links:
     url: https://github.com/LongJohnBlackbeard/JDEQuery/discussions
     about: Ask questions and discuss ideas with the community
   - name: 📚 Documentation
-    url: https://github.com/LongJohnBlackbeard/JDEQuery/blob/master/README.md
+    url: https://github.com/LongJohnBlackbeard/JDEQuery/blob/main/README.md
     about: Read the documentation and usage examples
   - name: 🔍 Sample Application
-    url: https://github.com/LongJohnBlackbeard/JDEQuery/tree/master/samples
+    url: https://github.com/LongJohnBlackbeard/JDEQuery/tree/main/samples
     about: View sample queries and integration examples
