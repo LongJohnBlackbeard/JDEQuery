@@ -168,8 +168,7 @@ JDEQuery.sln
 
 ### 🔄 In Progress
 
-- [ ] Create GitHub repository and push code
-- [ ] Add remote origin to local git repo
+None currently - MVP is complete!
 
 ### 📋 Pending (Priority Order)
 
@@ -395,5 +394,6 @@ dotnet run
 
 ---
 
-**Repository:** C:\Users\dtujo\RiderProjects\JDEQuery
+**Repository:** https://github.com/LongJohnBlackbeard/JDEQuery
+**Local Path:** C:\Users\dtujo\RiderProjects\JDEQuery
 **Documentation:** See JDE_Library_Project_Summary.md for detailed design specs
