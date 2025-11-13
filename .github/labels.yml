@@ -1,0 +1,165 @@
+# Label definitions for the repository
+# Sync with: https://github.com/marketplace/actions/label-syncer
+
+# Type labels
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+# Priority labels
+- name: "priority: critical"
+  color: "b60205"
+  description: "Critical priority - security or data loss issues"
+
+- name: "priority: high"
+  color: "ff9800"
+  description: "High priority"
+
+- name: "priority: medium"
+  color: "fbca04"
+  description: "Medium priority"
+
+- name: "priority: low"
+  color: "0e8a16"
+  description: "Low priority"
+
+# Status labels
+- name: "status: needs triage"
+  color: "ededed"
+  description: "Needs initial review and categorization"
+
+- name: "status: blocked"
+  color: "b60205"
+  description: "Blocked by external dependency"
+
+- name: "status: in progress"
+  color: "1d76db"
+  description: "Currently being worked on"
+
+- name: "status: needs review"
+  color: "fbca04"
+  description: "Awaiting code review"
+
+- name: "status: ready to merge"
+  color: "0e8a16"
+  description: "Approved and ready to merge"
+
+# Component labels
+- name: "component: core"
+  color: "5319e7"
+  description: "JDE.Core library"
+
+- name: "component: abstractions"
+  color: "5319e7"
+  description: "JDE.Abstractions interfaces"
+
+- name: "component: oracle"
+  color: "5319e7"
+  description: "Oracle provider"
+
+- name: "component: metadata"
+  color: "5319e7"
+  description: "Table metadata definitions"
+
+- name: "component: models"
+  color: "5319e7"
+  description: "DTO models"
+
+- name: "component: client"
+  color: "5319e7"
+  description: "JDE.Client API"
+
+- name: "component: tests"
+  color: "5319e7"
+  description: "Unit/integration tests"
+
+- name: "component: samples"
+  color: "5319e7"
+  description: "Sample applications"
+
+# Area labels
+- name: "area: query-builder"
+  color: "c5def5"
+  description: "Query builder fluent API"
+
+- name: "area: sql-generation"
+  color: "c5def5"
+  description: "SQL dialect and generation"
+
+- name: "area: operators"
+  color: "c5def5"
+  description: "Query operators (WHERE, LIKE, etc.)"
+
+- name: "area: pagination"
+  color: "c5def5"
+  description: "Skip/Take pagination"
+
+- name: "area: field-padding"
+  color: "c5def5"
+  description: "JDE field padding handling"
+
+- name: "area: configuration"
+  color: "c5def5"
+  description: "Configuration and DI"
+
+# Special labels
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+- name: "breaking change"
+  color: "b60205"
+  description: "Introduces breaking API changes"
+
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency updates"
+
+- name: "nuget"
+  color: "004088"
+  description: "NuGet package related"
+
+- name: "github-actions"
+  color: "000000"
+  description: "GitHub Actions workflows"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "This doesn't seem right"
+
+# JDE-specific labels
+- name: "jde: vanilla-table"
+  color: "bfd4f2"
+  description: "Related to vanilla JDE tables"
+
+- name: "jde: custom-table"
+  color: "bfd4f2"
+  description: "Related to custom JDE tables (F55-F59)"
+
+- name: "jde: database"
+  color: "bfd4f2"
+  description: "JDE database specific issues"

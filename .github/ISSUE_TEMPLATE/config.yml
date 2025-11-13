@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/LongJohnBlackbeard/JDEQuery/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/LongJohnBlackbeard/JDEQuery/blob/master/README.md
+    about: Read the documentation and usage examples
+  - name: 🔍 Sample Application
+    url: https://github.com/LongJohnBlackbeard/JDEQuery/tree/master/samples
+    about: View sample queries and integration examples

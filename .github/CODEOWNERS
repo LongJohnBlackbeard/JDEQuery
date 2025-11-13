@@ -1,0 +1,33 @@
+# CODEOWNERS file
+# These owners will be the default owners for everything in the repo
+# They will be requested for review when someone opens a pull request
+
+# Global owners
+* @LongJohnBlackbeard
+
+# Core library code
+/JDE.Abstractions/ @LongJohnBlackbeard
+/JDE.Core/ @LongJohnBlackbeard
+/JDE.Client/ @LongJohnBlackbeard
+
+# Provider implementations
+/JDE.Providers.Oracle/ @LongJohnBlackbeard
+/JDE.Providers.Abstractions/ @LongJohnBlackbeard
+
+# Metadata and models
+/JDE.Metadata/ @LongJohnBlackbeard
+/JDE.Models/ @LongJohnBlackbeard
+
+# Tests
+/JDE.Tests/ @LongJohnBlackbeard
+
+# Documentation
+*.md @LongJohnBlackbeard
+/docs/ @LongJohnBlackbeard
+
+# GitHub configuration
+/.github/ @LongJohnBlackbeard
+
+# Build and packaging
+*.csproj @LongJohnBlackbeard
+Directory.Build.props @LongJohnBlackbeard
