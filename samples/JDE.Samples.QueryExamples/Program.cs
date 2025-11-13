@@ -15,7 +15,7 @@ class Program
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false)
-            .AddCommandLineArgs(args)
+            .AddCommandLine(args)
             .Build();
 
         // Build host with dependency injection
