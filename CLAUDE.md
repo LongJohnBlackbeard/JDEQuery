@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** Metadata System Complete - Building Tooling
-**Latest Commit:** 44a64bc - feat: implement metadata system and F0101 model
+**Status:** Tooling Infrastructure Ready - Core Library Functional
+**Latest Commit:** 7655dc8 - chore: add metadata extraction tooling infrastructure
 
 ---
 
@@ -112,10 +112,23 @@ JDEQuery.sln
   - Parameterized queries with colon-prefix (:p0)
   - Connection testing and proper error handling
   - Commit: `795979f` - "feat: implement Oracle provider with SQL dialect"
+- [x] **Metadata system implemented** (JDE.Metadata):
+  - JdeField, JdeIndex, JdeTable base classes
+  - F0101 Address Book Master metadata (50+ fields, 4 indexes)
+  - F0101Model DTO for Dapper mapping
+  - GetField(), GetIndex() lookup methods
+  - Commit: `44a64bc` - "feat: implement metadata system and F0101 model"
+- [x] **Metadata extraction tooling created** (tools/):
+  - MetadataExtractor console app (C#, Oracle, Dapper, CsvHelper)
+  - CodeGenerator placeholder for code generation
+  - Comprehensive README.md with usage docs
+  - Vanilla table filtering: F* excluding F55-F59
+  - Commit: `d145875`, `7655dc8` - "chore: add metadata extraction tooling"
 
 ### 🔄 In Progress
 
-- [ ] Building metadata system for JDE tables
+- [ ] Implement MetadataExtractor Program.cs logic
+- [ ] Build JdeClient public API with DI
 
 ### 📋 Pending (Priority Order)
 
