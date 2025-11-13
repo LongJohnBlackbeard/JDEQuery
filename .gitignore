@@ -150,6 +150,11 @@ paket-files/
 .env.local
 .env.*.local
 
+# Configuration files with secrets (samples use appsettings.json with real credentials)
+samples/**/appsettings.json
+samples/**/appsettings.*.json
+!samples/**/appsettings.example.json
+
 # OS generated files
 .DS_Store
 .DS_Store?

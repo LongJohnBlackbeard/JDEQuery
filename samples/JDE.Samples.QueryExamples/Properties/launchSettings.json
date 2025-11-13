@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "JDE.Samples.QueryExamples": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "JDE Samples - TESTDTA": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--JdeQuery:Schema=TESTDTA --JdeQuery:Environment=Development",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "JDE Samples - DV920": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--JdeQuery:Schema=DV920 --JdeQuery:Environment=Development",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "JDE Samples - PY920": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "--JdeQuery:Schema=PY920 --JdeQuery:Environment=Test",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
