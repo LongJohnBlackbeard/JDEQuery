@@ -1,8 +1,8 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-13
-**Status:** MVP Complete - Tests Passing, Sample App Ready, GitHub Configured
-**Latest Commit:** fc6e5ce - chore: add GitHub repository configuration
+**Status:** MVP Complete - Tests Passing, Sample App Ready, GitHub Configured, CI/CD Working
+**Latest Commit:** fdec8b5 - fix: correct method name from AddCommandLineArgs to AddCommandLine
 
 ---
 
@@ -175,6 +175,13 @@ JDEQuery.sln
   - Code of Conduct (Contributor Covenant v2.0)
   - Security policy with vulnerability reporting and best practices
   - Commit: `fc6e5ce` - "chore: add GitHub repository configuration"
+- [x] **CI/CD fixes and improvements**:
+  - Added label-sync workflow to automatically create repository labels
+  - Fixed CI workflow permissions for Dependabot PRs
+  - Updated all GitHub Actions to latest versions (v5)
+  - Fixed security scan to only upload on push events
+  - Fixed sample app typo: AddCommandLineArgs → AddCommandLine
+  - Commits: `a4a30f9`, `fdec8b5`
 
 ### 🔄 In Progress
 
@@ -182,8 +189,8 @@ None currently - MVP is complete!
 
 ### 📋 Pending (Priority Order)
 
-1. **Enable GitHub repository features** - Issues, Discussions, Projects, Wiki
-2. **Sync repository labels** - Apply labels.yml to GitHub (via label-syncer action or manual)
+1. **Merge Dependabot PRs** - Now that labels are synced and CI is fixed
+2. **Enable GitHub repository features** - Issues, Discussions, Projects, Wiki
 3. Implement MetadataExtractor Program.cs logic
 4. Implement CodeGenerator to generate C# classes from CSV
 5. Write integration tests with Oracle database (requires DB access)
