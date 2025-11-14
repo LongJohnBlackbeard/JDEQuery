@@ -194,6 +194,35 @@ public class QueryBuilderTests
     }
 
     [Fact]
+    public void WhereTrimmedEqual_ShouldAutomaticallyTrimUserInput()
+    {
+        // Test that padded input from the user is automatically trimmed
+        // This handles the case where users copy values directly from the database
+        _mockDialect.Setup(d => d.BuildWhereClause(It.IsAny<IEnumerable<WhereCondition>>()))
+            .Returns<IEnumerable<WhereCondition>>(conditions =>
+            {
+                var condList = conditions.ToList();
+                condList[0].Operator.Should().Be(WhereOperator.TrimmedEqual);
+                // The value should be trimmed automatically
+                condList[0].Value.Should().Be("ACME CORP");
+                return "TRIM(\"ABALPH\") = :p0";
+            });
+
+        _mockDialect.Setup(d => d.BuildSelectSql(
+                It.IsAny<IEnumerable<string>>(),
+                "F0101",
+                "DV920",
+                It.IsAny<string>()))
+            .Returns("SELECT * FROM \"DV920\".\"F0101\" WHERE TRIM(\"ABALPH\") = :p0");
+
+        var builder = CreateBuilder();
+        // Pass a padded value (as if copied from the database)
+        var query = builder.WhereTrimmedEqual("ABALPH", "ACME CORP                    ").Build();
+
+        query.Should().NotBeNull();
+    }
+
+    [Fact]
     public void MultipleWhere_ShouldChainConditions()
     {
         _mockDialect.Setup(d => d.BuildWhereClause(It.IsAny<IEnumerable<WhereCondition>>()))

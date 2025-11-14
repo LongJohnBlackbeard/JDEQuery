@@ -72,6 +72,7 @@ class Program
         logger.LogInformation("--- Example 1: Basic Query (Single Record) ---");
         try
         {
+            // Replace 1001 with an actual address book number from your database
             var customer = await client.Query<F0101Model>("F0101")
                 .Where("ABAN8", 1001)
                 .FetchSingleAsync();
@@ -82,7 +83,7 @@ class Program
             }
             else
             {
-                logger.LogWarning("Customer 1001 not found");
+                logger.LogWarning("Customer 1001 not found (replace with a valid address book number)");
             }
         }
         catch (Exception ex)
@@ -97,9 +98,10 @@ class Program
         logger.LogInformation("--- Example 2: Column Selection (Performance) ---");
         try
         {
+            // Only select the columns you need for better performance
             var customers = await client.Query<F0101Model>("F0101")
                 .SelectFields("ABAN8", "ABALPH", "ABAT1", "ABAC01")
-                .Where("ABAT1", "C")
+                .Where("ABAT1", "C")  // Replace 'C' with a valid address book type in your database
                 .Take(5)
                 .FetchManyAsync();
 
@@ -184,11 +186,13 @@ class Program
             }
 
             // Using trimmed equal for exact match (ignoring padding)
-            // Note: Replace "ACME CORP" with an actual value from your database
+            // WhereTrimmedEqual automatically trims BOTH the database field AND your input
+            // So you can pass values with or without padding - it handles both!
             logger.LogInformation("Finding customer with trimmed name match:");
+            logger.LogInformation("  (Works with or without trailing spaces in your input)");
             var trimmedResult = await client.Query<F0101Model>("F0101")
                 .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .WhereTrimmedEqual("ABALPH", "Test")  // Replace with actual name
+                .WhereTrimmedEqual("ABALPH", "ACME CORPORATION")  // Replace with actual company name
                 .FetchSingleAsync();
 
             if (trimmedResult != null)
@@ -259,11 +263,11 @@ class Program
         logger.LogInformation("--- Example 6: Item Master (F4101) Queries ---");
         try
         {
-            // Query items by product code
-            logger.LogInformation("Finding items by product code:");
+            // Query items by purchase product code
+            logger.LogInformation("Finding items by purchase product code:");
             var items = await client.Query<F4101Model>("F4101")
                 .SelectFields("IMITM", "IMDSC1", "IMSRP1", "IMSRP2", "IMSTKT")
-                .Where("IMSRP1", "ABC")  // Replace with actual product code
+                .Where("IMPRP1", "ABC")  // Replace with actual product code from your database
                 .Take(3)
                 .FetchManyAsync();
 
@@ -288,7 +292,7 @@ class Program
             // Query specific item by number
             logger.LogInformation("Finding specific item by number:");
             var specificItem = await client.Query<F4101Model>("F4101")
-                .Where("IMITM", 1000)  // Replace with actual item number
+                .Where("IMITM", 1000)  // Replace with actual item number from your database
                 .FetchSingleAsync();
 
             if (specificItem != null)
@@ -301,7 +305,7 @@ class Program
             }
             else
             {
-                logger.LogInformation("  Item 1000 not found (try a different item number)");
+                logger.LogInformation("  Item 1000 not found (replace with a valid item number)");
             }
         }
         catch (Exception ex)

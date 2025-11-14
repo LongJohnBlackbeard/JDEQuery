@@ -227,7 +227,11 @@ public class QueryBuilder<T> : IQueryBuilder<T>
             throw new ArgumentNullException(nameof(value));
         }
 
-        _conditions.Add(new WhereCondition(fieldName, WhereOperator.TrimmedEqual, value));
+        // Automatically trim the user's input to handle cases where they copy values
+        // directly from the database with padding
+        var trimmedValue = value.Trim();
+
+        _conditions.Add(new WhereCondition(fieldName, WhereOperator.TrimmedEqual, trimmedValue));
         return this;
     }
 
