@@ -1,4 +1,5 @@
 using JDE.Client;
+using JDE.Metadata.Tables;
 using JDE.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,13 +51,14 @@ class Program
             logger.LogInformation("");
 
             // Run example queries
-            await Example1_BasicQuery(jdeClient, logger);
+            /*await Example1_BasicQuery(jdeClient, logger);
             await Example2_ColumnSelection(jdeClient, logger);
             await Example3_ComparisonOperators(jdeClient, logger);
             await Example4_FieldPaddingHandling(jdeClient, logger);
             await Example5_Pagination(jdeClient, logger);
             await Example6_ItemMasterQueries(jdeClient, logger);
-            await Example7_MultipleConditions(jdeClient, logger);
+            await Example7_MultipleConditions(jdeClient, logger);*/
+            await Example8_OrderQuery(jdeClient,  logger);
 
             logger.LogInformation("");
             logger.LogInformation("=== All examples completed successfully! ===");
@@ -70,11 +72,12 @@ class Program
     static async Task Example1_BasicQuery(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 1: Basic Query (Single Record) ---");
+        logger.LogInformation("  Uses type-safe column constants (F0101.Columns.ABAN8)");
         try
         {
             // Replace 1001 with an actual address book number from your database
             var customer = await client.Query<F0101Model>("F0101")
-                .Where("ABAN8", 1001)
+                .Where(F0101.Columns.ABAN8, 1001)  // Type-safe column reference
                 .FetchSingleAsync();
 
             if (customer != null)
@@ -96,12 +99,13 @@ class Program
     static async Task Example2_ColumnSelection(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 2: Column Selection (Performance) ---");
+        logger.LogInformation("  Uses type-safe column constants for field selection");
         try
         {
             // Only select the columns you need for better performance
             var customers = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1", "ABAC01")
-                .Where("ABAT1", "C")  // Replace 'C' with a valid address book type in your database
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1, F0101.Columns.ABAC01)
+                .Where(F0101.Columns.ABAT1, "C")  // Replace 'C' with a valid address book type in your database
                 .Take(5)
                 .FetchManyAsync();
 
@@ -124,13 +128,14 @@ class Program
     static async Task Example3_ComparisonOperators(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 3: Comparison Operators ---");
+        logger.LogInformation("  Uses type-safe column constants with comparison operators");
         try
         {
             // Greater than
             logger.LogInformation("Finding address book numbers > 10000:");
             var highNumbers = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .WhereGreaterThan("ABAN8", 10000)
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+                .WhereGreaterThan(F0101.Columns.ABAN8, 10000)
                 .Take(3)
                 .FetchManyAsync();
 
@@ -145,9 +150,9 @@ class Program
             // Range query
             logger.LogInformation("Finding address book numbers between 1000 and 2000:");
             var rangeResults = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH")
-                .WhereGreaterThanOrEqual("ABAN8", 1000)
-                .WhereLessThanOrEqual("ABAN8", 2000)
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH)
+                .WhereGreaterThanOrEqual(F0101.Columns.ABAN8, 1000)
+                .WhereLessThanOrEqual(F0101.Columns.ABAN8, 2000)
                 .Take(3)
                 .FetchManyAsync();
 
@@ -168,13 +173,14 @@ class Program
     static async Task Example4_FieldPaddingHandling(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 4: Field Padding Handling ---");
+        logger.LogInformation("  Uses type-safe column constants with LIKE and TRIM operations");
         try
         {
             // Using LIKE for pattern matching
             logger.LogInformation("Finding customers with names starting with 'A':");
             var likeResults = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .WhereLike("ABALPH", "A%")
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+                .WhereLike(F0101.Columns.ABALPH, "A%")
                 .Take(3)
                 .FetchManyAsync();
 
@@ -191,8 +197,8 @@ class Program
             logger.LogInformation("Finding customer with trimmed name match:");
             logger.LogInformation("  (Works with or without trailing spaces in your input)");
             var trimmedResult = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .WhereTrimmedEqual("ABALPH", "ACME CORPORATION")  // Replace with actual company name
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+                .WhereTrimmedEqual(F0101.Columns.ABALPH, "ACME CORPORATION")  // Replace with actual company name
                 .FetchSingleAsync();
 
             if (trimmedResult != null)
@@ -216,6 +222,7 @@ class Program
     static async Task Example5_Pagination(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 5: Pagination ---");
+        logger.LogInformation("  Uses type-safe column constants with Skip/Take");
         try
         {
             const int pageSize = 5;
@@ -223,8 +230,8 @@ class Program
             // Page 1
             logger.LogInformation("Fetching page 1 (first {PageSize} customers):", pageSize);
             var page1 = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .Where("ABAT1", "C")
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+                .Where(F0101.Columns.ABAT1, "C")
                 .Take(pageSize)
                 .FetchManyAsync();
 
@@ -238,8 +245,8 @@ class Program
             // Page 2
             logger.LogInformation("Fetching page 2 (next {PageSize} customers):", pageSize);
             var page2 = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1")
-                .Where("ABAT1", "C")
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+                .Where(F0101.Columns.ABAT1, "C")
                 .Skip(pageSize)
                 .Take(pageSize)
                 .FetchManyAsync();
@@ -261,13 +268,14 @@ class Program
     static async Task Example6_ItemMasterQueries(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 6: Item Master (F4101) Queries ---");
+        logger.LogInformation("  Uses type-safe column constants for F4101 (Item Master)");
         try
         {
             // Query items by purchase product code
             logger.LogInformation("Finding items by purchase product code:");
             var items = await client.Query<F4101Model>("F4101")
-                .SelectFields("IMITM", "IMDSC1", "IMSRP1", "IMSRP2", "IMSTKT")
-                .Where("IMPRP1", "ABC")  // Replace with actual product code from your database
+                .SelectFields(F4101.Columns.IMITM, F4101.Columns.IMDSC1, F4101.Columns.IMSRP1, F4101.Columns.IMSRP2, F4101.Columns.IMSTKT)
+                .Where(F4101.Columns.IMPRP1, "ABC")  // Replace with actual product code from your database
                 .Take(3)
                 .FetchManyAsync();
 
@@ -292,7 +300,7 @@ class Program
             // Query specific item by number
             logger.LogInformation("Finding specific item by number:");
             var specificItem = await client.Query<F4101Model>("F4101")
-                .Where("IMITM", 1000)  // Replace with actual item number from your database
+                .Where(F4101.Columns.IMITM, 1000)  // Replace with actual item number from your database
                 .FetchSingleAsync();
 
             if (specificItem != null)
@@ -318,13 +326,14 @@ class Program
     static async Task Example7_MultipleConditions(JdeClient client, ILogger logger)
     {
         logger.LogInformation("--- Example 7: Multiple WHERE Conditions ---");
+        logger.LogInformation("  Uses type-safe column constants with multiple conditions");
         try
         {
             logger.LogInformation("Finding customers with Type='C' AND ABAN8 > 1000:");
             var results = await client.Query<F0101Model>("F0101")
-                .SelectFields("ABAN8", "ABALPH", "ABAT1", "ABAC01")
-                .Where("ABAT1", "C")
-                .WhereGreaterThan("ABAN8", 1000)
+                .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1, F0101.Columns.ABAC01)
+                .Where(F0101.Columns.ABAT1, "C")
+                .WhereGreaterThan(F0101.Columns.ABAN8, 1000)
                 .Take(5)
                 .FetchManyAsync();
 
@@ -340,6 +349,25 @@ class Program
         catch (Exception ex)
         {
             logger.LogError(ex, "Error in Example 7");
+        }
+        logger.LogInformation("");
+    }
+
+    static async Task Example8_OrderQuery(JdeClient client, ILogger logger)
+    {
+        logger.LogInformation("--- Example 8: Order Query ---");
+        try
+        {
+            logger.LogInformation("Finding orders with SRST = 50");
+            var result = await client.Query<F4801>("F4801")
+                .Where("WASRST", "50")
+                .FetchManyAsync();
+
+            logger.LogInformation("Found {WorkOrderCount} Work Orders at Status 50", result.Count());
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in Example 8");
         }
         logger.LogInformation("");
     }

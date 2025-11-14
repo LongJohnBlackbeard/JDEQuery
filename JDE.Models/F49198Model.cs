@@ -1,0 +1,132 @@
+﻿namespace JDE.Models;
+
+/// <summary>
+/// F49198 - .
+/// </summary>
+public class F49198Model
+{
+    /// <summary>
+    /// OQVMCU (Primary Key).
+    /// </summary>
+    public string OQVMCU { get; set; }
+
+    /// <summary>
+    /// OQDCCD (Primary Key).
+    /// </summary>
+    public string OQDCCD { get; set; }
+
+    /// <summary>
+    /// OQOUT1.
+    /// </summary>
+    public string? OQOUT1 { get; set; }
+
+    /// <summary>
+    /// OQOUT2.
+    /// </summary>
+    public string? OQOUT2 { get; set; }
+
+    /// <summary>
+    /// OQOUT3.
+    /// </summary>
+    public string? OQOUT3 { get; set; }
+
+    /// <summary>
+    /// OQOUT4.
+    /// </summary>
+    public string? OQOUT4 { get; set; }
+
+    /// <summary>
+    /// OQOUT5.
+    /// </summary>
+    public string? OQOUT5 { get; set; }
+
+    /// <summary>
+    /// OQFID.
+    /// </summary>
+    public string? OQFID { get; set; }
+
+    /// <summary>
+    /// OQFID2.
+    /// </summary>
+    public string? OQFID2 { get; set; }
+
+    /// <summary>
+    /// OQDPCR.
+    /// </summary>
+    public string? OQDPCR { get; set; }
+
+    /// <summary>
+    /// OQDPCA.
+    /// </summary>
+    public decimal? OQDPCA { get; set; }
+
+    /// <summary>
+    /// OQDCNS.
+    /// </summary>
+    public string? OQDCNS { get; set; }
+
+    /// <summary>
+    /// OQCO.
+    /// </summary>
+    public string? OQCO { get; set; }
+
+    /// <summary>
+    /// OQEMCU.
+    /// </summary>
+    public string? OQEMCU { get; set; }
+
+    /// <summary>
+    /// OQMCU.
+    /// </summary>
+    public string? OQMCU { get; set; }
+
+    /// <summary>
+    /// OQURCD.
+    /// </summary>
+    public string? OQURCD { get; set; }
+
+    /// <summary>
+    /// OQURDT.
+    /// </summary>
+    public decimal? OQURDT { get; set; }
+
+    /// <summary>
+    /// OQURAT.
+    /// </summary>
+    public decimal? OQURAT { get; set; }
+
+    /// <summary>
+    /// OQURAB.
+    /// </summary>
+    public decimal? OQURAB { get; set; }
+
+    /// <summary>
+    /// OQURRF.
+    /// </summary>
+    public string? OQURRF { get; set; }
+
+    /// <summary>
+    /// OQUSER.
+    /// </summary>
+    public string? OQUSER { get; set; }
+
+    /// <summary>
+    /// OQPID.
+    /// </summary>
+    public string? OQPID { get; set; }
+
+    /// <summary>
+    /// OQJOBN.
+    /// </summary>
+    public string? OQJOBN { get; set; }
+
+    /// <summary>
+    /// OQUPMJ.
+    /// </summary>
+    public decimal? OQUPMJ { get; set; }
+
+    /// <summary>
+    /// OQTDAY.
+    /// </summary>
+    public decimal? OQTDAY { get; set; }
+}

@@ -7,14 +7,16 @@ A **database-agnostic .NET library** for querying JD Edwards (JDE) EnterpriseOne
 
 ## Features
 
-- **Database Agnostic** - Provider pattern supports multiple databases (Oracle, SQL Server, PostgreSQL, DB2)
-- **Strongly Typed** - Type-safe DTOs for JDE tables with IntelliSense support
-- **High Performance** - Built on Dapper with optimized SQL generation
-- **Column Selection** - Fetch only the columns you need for better performance
+- **4,937 JDE Tables Ready** - Complete metadata and models for all vanilla JDE tables (F* excluding F55-F59 custom tables)
+- **Type-Safe Column Constants** - IntelliSense-enabled column references with compile-time validation (`F0101.Columns.ABAN8`)
+- **Database Agnostic** - Provider pattern supports multiple databases (Oracle implemented, others planned)
+- **Strongly Typed Models** - Auto-generated DTOs with proper nullable types and field mappings
+- **High Performance** - Built on Dapper with optimized SQL generation and column selection
 - **Pagination Support** - Built-in Skip/Take for efficient large dataset handling
-- **Predefined Queries** - Hard-coded metadata for vanilla JDE tables and indexes
+- **Rich Query Operators** - Comparison operators (>, <, >=, <=, !=), LIKE patterns, trimmed equality
 - **Fluent API** - Intuitive, chainable query builder interface
-- **Configuration Driven** - Environment-aware connection and schema management
+- **Configuration Driven** - Dependency injection ready with multiple configuration options
+- **Metadata Tools** - Extract and generate JDE table metadata from any Oracle database
 
 ## Quick Start
 
@@ -29,30 +31,45 @@ dotnet add package JDE.Providers.Oracle  # For Oracle databases
 
 ```csharp
 using JDE.Client;
+using JDE.Metadata.Tables;
 using JDE.Models;
+using Microsoft.Extensions.DependencyInjection;
 
-// Configure the JDE client
-var jdeClient = new JdeClientBuilder()
-    .UseOracle(connectionString)
-    .UseSchema("JDEPROD")
-    .Build();
+// Configure with dependency injection
+services.AddJdeQuery(configuration, "JdeQuery");
 
-// Query a single customer by address book number
-var customer = await jdeClient.Query<F0101>()
-    .UsingIndex("PK_F0101")
-    .Where("ABAN8", 1001)
+// Get the client
+var jdeClient = serviceProvider.GetRequiredService<JdeClient>();
+
+// Query a single customer - with type-safe column constants
+var customer = await jdeClient.Query<F0101Model>("F0101")
+    .Where(F0101.Columns.ABAN8, 1001)
     .FetchSingleAsync();
 
-// Query multiple suppliers with column selection
-var suppliers = await jdeClient.Query<F0101>()
-    .SelectFields("ABAN8", "ABALPH", "ABAT1")
-    .Filter("ABAT1", "V")  // V = Supplier
+Console.WriteLine($"Customer: {customer.ABAN8} - {customer.ABALPH?.Trim()}");
+
+// Query multiple suppliers with column selection and type-safety
+var suppliers = await jdeClient.Query<F0101Model>("F0101")
+    .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH, F0101.Columns.ABAT1)
+    .Where(F0101.Columns.ABAT1, "V")  // V = Supplier
     .Take(100)
     .FetchManyAsync();
 
+// Range query with comparison operators
+var highValueCustomers = await jdeClient.Query<F0101Model>("F0101")
+    .WhereGreaterThan(F0101.Columns.ABAN8, 100000)
+    .Take(50)
+    .FetchManyAsync();
+
+// Field padding handling with LIKE and TRIM
+var searchResults = await jdeClient.Query<F0101Model>("F0101")
+    .SelectFields(F0101.Columns.ABAN8, F0101.Columns.ABALPH)
+    .WhereLike(F0101.Columns.ABALPH, "ACME%")
+    .FetchManyAsync();
+
 // Pagination example
-var page2 = await jdeClient.Query<F0101>()
-    .Filter("ABAT1", "C")  // C = Customer
+var page2 = await jdeClient.Query<F0101Model>("F0101")
+    .Where(F0101.Columns.ABAT1, "C")  // C = Customer
     .Skip(100)
     .Take(50)
     .FetchManyAsync();
@@ -106,12 +123,71 @@ services.AddJdeQuery(options =>
 }
 ```
 
-## Supported JDE Tables (Initial Release)
+## Supported JDE Tables
 
+**4,937 vanilla JDE tables** are included with complete metadata and models:
+
+- All standard JDE tables (F* prefix)
+- Excludes F55xxx-F59xxx (custom/OneWorld tables)
+- Auto-generated from Oracle data dictionary
+- Includes table descriptions, column definitions, indexes, and primary keys
+
+**Common Tables Available:**
 - **F0101** - Address Book Master
 - **F0111** - Address Book - Who's Who
+- **F4101** - Item Master
 - **F4801** - Work Order Master File
-- More tables coming soon!
+- **F0005** - User Defined Codes
+- **F9210** - Data Dictionary
+- **And 4,931 more!**
+
+See the complete list in `JDE.Metadata/Tables/` and `JDE.Models/`
+
+## Metadata Tools
+
+The library includes command-line tools for extracting and generating JDE metadata:
+
+### MetadataExtractor
+
+Extracts table metadata from Oracle data dictionary views and exports to CSV:
+
+```bash
+cd tools/MetadataExtractor
+dotnet run -- \
+  --connection "User Id=JDE;Password=***;Data Source=jdeprod" \
+  --schema TESTDTA \
+  --output ./metadata_output \
+  --vanilla-only
+```
+
+**Features:**
+- Extracts tables, columns, and indexes from Oracle
+- Batched queries to handle Oracle's 1000-item IN clause limit
+- Progress bars for real-time feedback
+- Filters vanilla JDE tables (F* excluding F55xxx-F59xxx)
+- Exports to CSV: `jde_tables.csv`, `jde_columns.csv`, `jde_indexes.csv`
+
+### CodeGenerator
+
+Generates C# metadata and model classes from extracted CSV files:
+
+```bash
+cd tools/CodeGenerator
+dotnet run -- \
+  --input ./metadata_output \
+  --output ../../JDE.Metadata/Tables \
+  --models-output ../../JDE.Models \
+  --skip-existing
+```
+
+**Features:**
+- Generates metadata classes with type-safe column constants
+- Generates model classes (DTOs) with proper C# types
+- Handles special characters in column names (#, $, @) with `[Column]` attributes
+- `--skip-existing` flag preserves hand-crafted files
+- Progress reporting every 100 files
+
+See [tools/README.md](tools/README.md) for detailed documentation.
 
 ## Database Provider Support
 
@@ -146,13 +222,26 @@ dotnet test
 
 ## Roadmap
 
-- [ ] Core abstractions and Oracle provider
-- [ ] F0101 (Address Book) implementation
-- [ ] SQL Server provider
-- [ ] PostgreSQL provider
-- [ ] Custom table support via external metadata (JSON/YAML)
-- [ ] Optional caching layer (Redis/in-memory)
+**Completed ✅**
+- [x] Core abstractions and Oracle provider
+- [x] 4,937 vanilla JDE table metadata and models
+- [x] Type-safe column constants for all tables
+- [x] Fluent query API with comparison operators
+- [x] Field padding handling (LIKE, TRIM)
+- [x] Pagination support (Skip/Take)
+- [x] Metadata extraction and code generation tools
+- [x] Comprehensive unit tests (43 tests)
+- [x] Sample application with 8 examples
+
+**In Progress 🚧**
+- [ ] JDE-specific features (UDC lookups, decimal handling, multi-schema)
+- [ ] Additional database providers (SQL Server, PostgreSQL, DB2)
+
+**Planned 📋**
+- [ ] Optional configurable caching layer (Redis/in-memory)
 - [ ] Async streaming for large datasets
+- [ ] Custom table support via external metadata
+- [ ] Advanced join support
 - [ ] GraphQL or REST API generator
 
 ## License

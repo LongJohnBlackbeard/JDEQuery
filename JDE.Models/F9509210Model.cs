@@ -1,0 +1,37 @@
+﻿namespace JDE.Models;
+
+/// <summary>
+/// F9509210 - .
+/// </summary>
+public class F9509210Model
+{
+    /// <summary>
+    /// IDOBNM (Primary Key).
+    /// </summary>
+    public string IDOBNM { get; set; }
+
+    /// <summary>
+    /// IDCTRLID (Primary Key).
+    /// </summary>
+    public decimal IDCTRLID { get; set; }
+
+    /// <summary>
+    /// IDRCRDTP (Primary Key).
+    /// </summary>
+    public decimal IDRCRDTP { get; set; }
+
+    /// <summary>
+    /// IDFMNM (Primary Key).
+    /// </summary>
+    public string IDFMNM { get; set; }
+
+    /// <summary>
+    /// IDTEXTID (Primary Key).
+    /// </summary>
+    public decimal IDTEXTID { get; set; }
+
+    /// <summary>
+    /// IDTEXT1.
+    /// </summary>
+    public string? IDTEXT1 { get; set; }
+}

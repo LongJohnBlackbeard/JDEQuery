@@ -1,9 +1,9 @@
 # JDE Query Library - Development Context
 
 **Last Updated:** 2025-11-14
-**Status:** MVP Complete - All Tests Passing (43), Sample App Tested Against Real JDE Database
+**Status:** Metadata Generation Complete - Documentation Updates Pending
 **Default Branch:** main (renamed from master)
-**Latest Commit:** ef4f7fa - feat: auto-trim user input in WhereTrimmedEqual for better UX
+**Latest Session:** Completed metadata/model generation tools + type-safe column constants
 
 ---
 
@@ -223,22 +223,92 @@ JDEQuery.sln
   - Scrubbed personal data from sample queries
   - All 43 unit tests passing
   - Commit: `ef4f7fa` - "feat: auto-trim user input in WhereTrimmedEqual for better UX"
+- [x] **MetadataExtractor tool implemented and tested**:
+  - Command-line tool to extract JDE table metadata from Oracle
+  - Connects to Oracle database and queries data dictionary views
+  - Extracts vanilla JDE tables (F* excluding F55xxx-F59xxx custom tables)
+  - Batched queries to handle Oracle's 1000-item IN clause limit
+  - Progress bars for real-time extraction feedback
+  - Exports to 3 CSV files: jde_tables.csv, jde_columns.csv, jde_indexes.csv
+  - Successfully tested against TESTDTA schema
+  - **Extracted 4,937 tables, 150,838 columns, 35,726 index columns**
+  - Command-line arguments: --connection, --schema, --output, --vanilla-only, --prefix
+  - Password masking in console output for security
+  - Uses CsvHelper, Dapper, and Oracle.ManagedDataAccess.Core
+- [x] **CodeGenerator tool implemented and tested**:
+  - Reads CSV files from MetadataExtractor output
+  - Generates C# metadata classes AND model classes for all JDE tables
+  - Maps Oracle data types to JdeDataType (VARCHAR2→String, NUMBER→Numeric, DATE→Date)
+  - Maps Oracle types to C# types for models (NUMBER→decimal, VARCHAR2→string, DATE→DateTime)
+  - Identifies primary keys and required (NOT NULL) fields
+  - Generates index definitions with proper unique/PK flags
+  - Creates properly formatted C# files with XML documentation
+  - Progress reporting every 100 files
+  - **Successfully generated 4,937 metadata classes + 4,937 model classes**
+  - Generated classes tested with QueryExamples - working correctly
+  - Command-line arguments: --input, --output, --models-output, --skip-existing
+  - Uses CsvHelper for CSV parsing and StringBuilder for code generation
+  - Special character handling: Sanitizes column names with #, $, @, etc. using [Column] attributes
+  - --skip-existing flag preserves hand-crafted files during regeneration
+- [x] **Type-safe column constants** (CodeGenerator enhancement):
+  - Added nested `Columns` class to all metadata classes
+  - Provides IntelliSense support and compile-time validation
+  - Example: `F0101.Columns.ABAN8` instead of `"ABAN8"`
+  - Backward compatible - string-based column names still work
+  - Prevents typos and improves developer experience
+  - **4,937 metadata classes now include type-safe column constants**
+- [x] **Column name sanitization fix** (CodeGenerator):
+  - Fixed compilation errors from special characters (#, $, @) in column names
+  - Sanitizes both property names in models AND constant names in Columns class
+  - Example: `R#HST` → constant name `R_HST` with value `"R#HST"`
+  - Preserves original database column names for correct mapping
+  - Regenerated all 4,937 metadata and model classes successfully
+- [x] **Sample application updated with type-safe columns**:
+  - Updated Examples 2-7 to use type-safe column constants
+  - Added explanatory log messages about type-safety to each example
+  - Demonstrates F0101.Columns and F4101.Columns usage throughout
+  - All examples now follow best practices with compile-time validated column names
+- [x] **README.md comprehensive update**:
+  - Updated Features section highlighting 4,937 tables and type-safe columns
+  - Replaced draft API with actual implementation in Basic Usage
+  - Added complete Metadata Tools section with MetadataExtractor and CodeGenerator
+  - Updated Supported JDE Tables section with comprehensive list
+  - Reorganized Roadmap into Completed/In Progress/Planned with checkmarks
+  - All code examples now demonstrate type-safe column constants
 
 ### 🔄 In Progress
 
-None currently - MVP is complete and tested!
+None currently - planning JDE-specific features (UDC, decimals, multi-schema)
 
 ### 📋 Pending (Priority Order)
 
-1. **Merge Dependabot PRs** - Now that labels are synced and CI is fixed
-2. **Enable GitHub repository features** - Issues, Discussions, Projects, Wiki
-3. Implement MetadataExtractor Program.cs logic
-4. Implement CodeGenerator to generate C# classes from CSV
-5. Write integration tests with Oracle database (requires DB access)
-6. Add more JDE table metadata (F0111, F0006, F4801, etc.)
-7. Create comprehensive documentation (README updates, wiki)
-8. Create first release (v0.1.0-alpha.1) to test release workflow
-9. Publish NuGet packages to nuget.org
+**Remaining Documentation:**
+1. **Update tools/README.md** - Add comprehensive documentation for:
+   - MetadataExtractor usage, options, and examples
+   - CodeGenerator usage, options, and examples
+   - Workflow: Extract → Generate → Use
+2. **Update CONTRIBUTING.md** - Add section on regenerating metadata classes
+3. **Update API Design Examples in CLAUDE.md** - Convert to type-safe column syntax
+
+**Session Cleanup:**
+4. **Commit all changes** - CodeGenerator fixes, sample updates, README.md updates, CLAUDE.md updates
+5. **Push to GitHub** - Share all recent work
+
+**JDE-Specific Features (Designed, Not Implemented):**
+3. **Multi-schema/database configuration** - Support F9210, F0005 in different schemas/databases
+4. **Data Dictionary Service (F9210)** - Field alias lookups, UDC codes, decimal metadata
+5. **UDC Service (F0005)** - User Defined Code lookups with full field support
+6. **Decimal Conversion Service** - Apply/remove decimals based on F9210.FRCDEC
+7. **Query Builder enhancements** - WithDecimals(), WithUdcDescriptions() methods
+8. **Configurable caching** - Optional caching for F9210/F0005 (user opt-in)
+
+**Infrastructure:**
+9. **Merge Dependabot PRs** - Now that labels are synced and CI is fixed
+10. **Enable GitHub repository features** - Issues, Discussions, Projects, Wiki
+11. Write integration tests with Oracle database (requires DB access)
+12. Create comprehensive documentation (README updates, wiki)
+13. Create first release (v0.1.0-alpha.1) to test release workflow
+14. Publish NuGet packages to nuget.org
 
 ---
 
