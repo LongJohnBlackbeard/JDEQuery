@@ -1,9 +1,9 @@
 # JDE Query Library - Development Context
 
-**Last Updated:** 2025-11-13
-**Status:** MVP Complete - Tests Passing, Sample App Ready, GitHub Configured, CI/CD Working
+**Last Updated:** 2025-11-14
+**Status:** MVP Complete - All Tests Passing (43), Sample App Tested Against Real JDE Database
 **Default Branch:** main (renamed from master)
-**Latest Commit:** 173ef6e - refactor: update all branch references from master to main
+**Latest Commit:** ef4f7fa - feat: auto-trim user input in WhereTrimmedEqual for better UX
 
 ---
 
@@ -190,10 +190,43 @@ JDEQuery.sln
   - Changed default branch on GitHub
   - Deleted old master branch
   - Commit: `173ef6e` - "refactor: update all branch references from master to main"
+- [x] **Git configuration for GitHub account**:
+  - Updated local git config to use GitHub username: LongJohnBlackbeard
+  - Set email to noreply address to keep personal email private
+  - All future commits properly attributed to GitHub account
+- [x] **Sample application launch profiles**:
+  - Added sample project to solution (JDE.Samples.QueryExamples)
+  - Created launch profiles for Rider/VS (default, TESTDTA, DV920, PY920)
+  - Enabled one-click run from IDE
+  - Commit: `c129a11` - "feat: add launch profiles and protect connection strings"
+- [x] **Connection string security**:
+  - Added `appsettings.json` to .gitignore to prevent credential commits
+  - Created `appsettings.example.json` template without credentials
+  - Removed existing appsettings.json from git tracking
+  - Local credentials preserved and functional
+- [x] **Real database testing completed**:
+  - Successfully tested against TESTDTA schema on Oracle database
+  - All 7 sample examples executed successfully:
+    * Example 1: Basic Query - Single record retrieval ✅
+    * Example 2: Column Selection - Performance optimization ✅
+    * Example 3: Comparison Operators - Range queries ✅
+    * Example 4: Field Padding - LIKE and TRIM operations ✅
+    * Example 5: Pagination - Skip/Take patterns ✅
+    * Example 6: Item Master (F4101) queries ✅
+    * Example 7: Multiple WHERE conditions ✅
+  - Validated against real JDE data (F0101 Address Book, F4101 Item Master)
+- [x] **WhereTrimmedEqual UX improvement**:
+  - Now automatically trims user input to handle padded values
+  - Users can pass values with or without trailing spaces - both work
+  - Handles cases where users copy values directly from database
+  - Added test: WhereTrimmedEqual_ShouldAutomaticallyTrimUserInput
+  - Scrubbed personal data from sample queries
+  - All 43 unit tests passing
+  - Commit: `ef4f7fa` - "feat: auto-trim user input in WhereTrimmedEqual for better UX"
 
 ### 🔄 In Progress
 
-None currently - MVP is complete!
+None currently - MVP is complete and tested!
 
 ### 📋 Pending (Priority Order)
 
@@ -348,7 +381,7 @@ None currently.
 
 | Provider | Status | Priority |
 |----------|--------|----------|
-| Oracle | 🟡 Planned | P0 (MVP) |
+| Oracle | ✅ Complete & Tested | P0 (MVP) |
 | SQL Server | ⚪ Future | P1 |
 | PostgreSQL | ⚪ Future | P2 |
 | IBM Db2 | ⚪ Future | P3 |
@@ -357,7 +390,7 @@ None currently.
 
 ## Testing and Validation
 
-### Unit Tests (42 tests - all passing)
+### Unit Tests (43 tests - all passing)
 
 **Run tests:** `dotnet test JDE.Tests/JDE.Tests.csproj`
 
@@ -370,36 +403,46 @@ None currently.
 - NULL handling (IS NULL, IS NOT NULL)
 - Multiple WHERE conditions with AND
 
-**QueryBuilderTests (18 tests):**
+**QueryBuilderTests (19 tests):**
 - Field selection validation
 - All operator methods (WhereGreaterThan, WhereLessThan, etc.)
 - Field padding methods (WhereLike, WhereTrimmedEqual)
+- Auto-trimming of user input in WhereTrimmedEqual
 - Pagination (Skip/Take) with validation
 - Parameter generation from WhereCondition objects
 - Async execution (FetchSingleAsync, FetchManyAsync)
 - Mock-based testing with IDbProvider
 
-### Sample Application
+### Sample Application ✅ TESTED
 
 **Location:** `samples/JDE.Samples.QueryExamples/`
 
 **Run sample:**
 ```bash
+# From Rider/Visual Studio: Select launch profile and click Run
+# Or from command line:
 cd samples/JDE.Samples.QueryExamples
-# Update appsettings.json with your connection string
+# Copy appsettings.example.json to appsettings.json and configure your connection
 dotnet run
 ```
 
-**7 Example Queries:**
-1. Basic Query - Single record retrieval
-2. Column Selection - Performance optimization
-3. Comparison Operators - Range queries
-4. Field Padding Handling - LIKE and TRIM
-5. Pagination - Skip/Take patterns
-6. Item Master Queries - F4101 examples
-7. Multiple Conditions - Complex WHERE clauses
+**7 Example Queries (All Tested Successfully):**
+1. Basic Query - Single record retrieval ✅
+2. Column Selection - Performance optimization ✅
+3. Comparison Operators - Range queries ✅
+4. Field Padding Handling - LIKE and TRIM ✅
+5. Pagination - Skip/Take patterns ✅
+6. Item Master Queries - F4101 examples ✅
+7. Multiple Conditions - Complex WHERE clauses ✅
+
+**Launch Profiles Available:**
+- JDE.Samples.QueryExamples (default - uses appsettings.json)
+- JDE Samples - TESTDTA
+- JDE Samples - DV920
+- JDE Samples - PY920
 
 **Environments Configured:**
+- TESTDTA (Test data) ✅ Tested
 - DV920 (Development on non-prod)
 - PY920 (Test on non-prod)
 - PROD920 (Production)
@@ -412,12 +455,14 @@ dotnet run
 - Connection string configuration per environment (DEV, TEST, PROD)
 - F0101 (Address Book) serves as the reference table implementation
 - **JDE Field Padding:** JDE pads all character fields to max length with spaces
-  - Use `WhereTrimmedEqual()` for exact matches without padding
-  - Use `WhereLike()` for pattern matching
+  - Use `WhereTrimmedEqual()` for exact matches - automatically trims BOTH database field AND user input
+  - Users can pass values with or without padding - library handles both cases
+  - Use `WhereLike()` for pattern matching with wildcards
   - Regular `Where()` requires exact match including padding
 - **Vanilla Tables:** Tables starting with 'F' EXCLUDING F55xxx-F59xxx (custom/OneWorld)
 - **Tools Projects:** MetadataExtractor and CodeGenerator are marked `IsPackable=false` and excluded from NuGet packages
-- **Test Coverage:** 42 unit tests covering all operators, pagination, and field padding
+- **Test Coverage:** 43 unit tests covering all operators, pagination, field padding, and auto-trimming
+- **Connection String Security:** appsettings.json is in .gitignore - use appsettings.example.json as template
 
 ---
 
