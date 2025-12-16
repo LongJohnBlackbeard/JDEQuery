@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
@@ -57,7 +57,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
@@ -84,7 +84,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
@@ -107,7 +107,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
